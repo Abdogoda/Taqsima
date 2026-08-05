@@ -36,21 +36,19 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function test_passkey_login_response_redirects_to_the_current_team_dashboard(): void
+    public function test_passkey_login_response_redirects_to_the_dashboard(): void
     {
         $user = User::factory()->create();
 
-        $request = Request::create(route('login', absolute: false), 'GET', server: [
-            'HTTP_ACCEPT' => 'application/json',
-        ]);
+        $request = Request::create(route('login', absolute: false), 'GET');
         $request->setLaravelSession($this->app['session.store']);
         $request->setUserResolver(fn () => $user);
 
-        $jsonResponse = app(PasskeyLoginResponse::class)->toResponse($request);
+        $response = app(PasskeyLoginResponse::class)->toResponse($request);
 
         $this->assertSame(
-            route('dashboard', ['current_team' => $user->personalTeam()->slug]),
-            $jsonResponse->getData()->redirect,
+            route('dashboard'),
+            $response->getTargetUrl(),
         );
     }
 

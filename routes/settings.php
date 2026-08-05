@@ -23,12 +23,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ),
         )
         ->name('security.edit');
-
-    Route::livewire('settings/teams', 'pages::teams.index')->name('teams.index');
-
-    Route::middleware(EnsureTeamMembership::class)->group(function () {
-        Route::livewire('settings/teams/{team}', 'pages::teams.edit')->name('teams.edit');
-    });
 });
 
 Route::get('.well-known/passkey-endpoints', function () {

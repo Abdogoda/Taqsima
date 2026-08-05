@@ -2,48 +2,36 @@
 
 namespace Database\Factories;
 
+use App\Models\Session;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Team>
  */
 class TeamFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Team::class;
+
     public function definition(): array
     {
-        $name = fake()->unique()->company();
+        $teamPresets = [
+            ['name' => 'Red Team', 'color' => '#EF4444'],
+            ['name' => 'White Team', 'color' => '#FFFFFF'],
+            ['name' => 'Blue Team', 'color' => '#3B82F6'],
+            ['name' => 'Green Team', 'color' => '#10B981'],
+            ['name' => 'Yellow Team', 'color' => '#F59E0B'],
+            ['name' => 'Bench', 'color' => '#6B7280'],
+        ];
+
+        $preset = fake()->randomElement($teamPresets);
 
         return [
-            'name' => $name,
-            'slug' => Str::slug($name),
-            'is_personal' => false,
+            'session_id' => Session::factory(),
+            'name' => $preset['name'],
+            'color' => $preset['color'],
+            'logo' => null,
+            'display_order' => fake()->numberBetween(1, 4),
         ];
-    }
-
-    /**
-     * Indicate that the team is a personal team.
-     */
-    public function personal(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_personal' => true,
-        ]);
-    }
-
-    /**
-     * Indicate that the team has been deleted.
-     */
-    public function trashed(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'deleted_at' => now(),
-        ]);
     }
 }
